@@ -1,7 +1,7 @@
 Laravel Prestashop Web Service
 ========
 
-Laravel 5 wrapper for Prestashop Web Service Library
+Laravel 12 wrapper for Prestashop Web Service Library
 
 Installation
 ------------
@@ -9,25 +9,25 @@ Installation
 Require this package with composer using the following command:
 
 ```shell
-composer require protechstudio/laravel-prestashop-webservice
+composer require prajapatidhara1510/laravel-prestashop-webservice
 ```
 
 After updating composer, add the service provider to the `providers` array in `config/app.php`
 
 ```php
-Protechstudio\PrestashopWebService\PrestashopWebServiceProvider::class,
+PrajapatiDhara1510\PrestashopWebService\PrestashopWebServiceProvider::class,
 ```
 
 You may also add the Facade in the `aliases` array in `config/app.php`
 
 ```php
-'Prestashop' => Protechstudio\PrestashopWebService\PrestashopWebServiceFacade::class,
+'Prestashop' => PrajapatiDhara1510\PrestashopWebService\PrestashopWebServiceFacade::class,
 ```
 
 Finally publish the configuration file using the artisan command
 
 ```shell
-php artisan vendor:publish --provider="Protechstudio\PrestashopWebService\PrestashopWebServiceProvider"
+php artisan vendor:publish --provider="PrajapatiDhara1510\PrestashopWebService\PrestashopWebServiceProvider"
 ```
 
 Configuration
@@ -53,7 +53,7 @@ You may use the Prestashop Web Service wrapper in two ways:
 
 ```php
 ...
-use Protechstudio\PrestashopWebService\PrestashopWebService;
+use PrajapatiDhara1510\PrestashopWebService\PrestashopWebService;
 
 class FooController extends Controller
 {

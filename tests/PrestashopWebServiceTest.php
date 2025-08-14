@@ -1,11 +1,10 @@
 <?php
+namespace PrajapatiDhara1510\PrestashopWebService\Tests;
 
-namespace Protechstudio\PrestashopWebService\Tests;
-
-use Protechstudio\PrestashopWebService\PrestashopWebService;
-use Protechstudio\PrestashopWebService\Exceptions\PrestashopWebServiceException;
-use Protechstudio\PrestashopWebService\Exceptions\PrestashopWebServiceRequestException;
-use Protechstudio\PrestashopWebService\PrestashopWebServiceLibrary;
+use PrajapatiDhara1510\PrestashopWebService\Exceptions\PrestashopWebServiceException;
+use PrajapatiDhara1510\PrestashopWebService\Exceptions\PrestashopWebServiceRequestException;
+use PrajapatiDhara1510\PrestashopWebService\PrestashopWebService;
+use PrajapatiDhara1510\PrestashopWebService\PrestashopWebServiceLibrary;
 use Prestashop;
 
 class PrestashopWebServiceTest extends TestCase
@@ -15,26 +14,26 @@ class PrestashopWebServiceTest extends TestCase
     {
         $this->assertInstanceOf(PrestashopWebService::class, Prestashop::getFacadeRoot());
     }
-    
+
     /** @test */
     public function test_request_is_correct()
     {
-        $requestResponseStub = require(__DIR__.'/requests/category-schema.php');
+        $requestResponseStub = require __DIR__ . '/requests/category-schema.php';
 
-         list($header, $body) = explode("\n\n", $requestResponseStub[0], 2);
-         $header_size = strlen($header) + 2;
+        list($header, $body) = explode("\n\n", $requestResponseStub[0], 2);
+        $header_size         = strlen($header) + 2;
 
-         $this->assertEquals($header_size, $requestResponseStub[1]['header_size']);
+        $this->assertEquals($header_size, $requestResponseStub[1]['header_size']);
     }
 
     /** @test */
     public function it_can_perform_a_get_request()
     {
-        $requestResponseStub = require(__DIR__.'/requests/category-schema.php');
-        $ps = $this->getMockedLibrary('executeCurl', $requestResponseStub);
+        $requestResponseStub = require __DIR__ . '/requests/category-schema.php';
+        $ps                  = $this->getMockedLibrary('executeCurl', $requestResponseStub);
 
         $xml = $ps->get(['resource' => 'categories']);
-        
+
         $this->assertEquals('prestashop', $xml->getName());
         $this->assertEquals('category', $xml->children()[0]->getName());
     }
@@ -43,8 +42,8 @@ class PrestashopWebServiceTest extends TestCase
     public function it_throws_exception_on_404()
     {
         $ps = $this->getMockedLibrary('executeRequest', [
-                'status_code' => 404,
-                'response' => '<?xml version="1.0" encoding="UTF-8"?>
+            'status_code' => 404,
+            'response'    => '<?xml version="1.0" encoding="UTF-8"?>
 <prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
 <errors>
 <error>
@@ -53,15 +52,15 @@ class PrestashopWebServiceTest extends TestCase
 </error>
 </errors>
 </prestashop>',
-                'header' => ''
-            ]);
+            'header'      => '',
+        ]);
 
         try {
             $xml = $ps->get(['resource' => 'categories']);
         } catch (PrestashopWebServiceRequestException $exception) {
             $this->assertEquals(404, $exception->getCode());
             $this->assertTrue($exception->hasResponse());
-            $this->assertEquals('Invalid ID', (string)$exception->getResponse()->errors->error->message);
+            $this->assertEquals('Invalid ID', (string) $exception->getResponse()->errors->error->message);
         }
     }
 
@@ -69,12 +68,12 @@ class PrestashopWebServiceTest extends TestCase
     public function it_throws_exception_on_unknown_http_status()
     {
         $ps = $this->getMockedLibrary('executeRequest', [
-                'status_code' => 999,
-                'response' => '<?xml version="1.0" encoding="UTF-8"?>
+            'status_code' => 999,
+            'response'    => '<?xml version="1.0" encoding="UTF-8"?>
 <prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
 </prestashop>',
-                'header' => ''
-            ]);
+            'header'      => '',
+        ]);
 
         $this->expectExceptionMessage('unexpected HTTP status of: 999', PrestashopWebServiceException::class);
         $xml = $ps->get(['resource' => 'categories']);
@@ -84,10 +83,10 @@ class PrestashopWebServiceTest extends TestCase
     public function it_throws_exception_on_empty_response()
     {
         $ps = $this->getMockedLibrary('executeRequest', [
-                'status_code' => 200,
-                'response' => '',
-                'header' => ''
-            ]);
+            'status_code' => 200,
+            'response'    => '',
+            'header'      => '',
+        ]);
 
         $this->expectExceptionMessage('HTTP response is empty', PrestashopWebServiceException::class);
         $xml = $ps->get(['resource' => 'categories']);
@@ -97,10 +96,10 @@ class PrestashopWebServiceTest extends TestCase
     public function it_throws_exception_on_malformed_xml()
     {
         $ps = $this->getMockedLibrary('executeRequest', [
-                'status_code' => 200,
-                'response' => '<malformed>',
-                'header' => ''
-            ]);
+            'status_code' => 200,
+            'response'    => '<malformed>',
+            'header'      => '',
+        ]);
 
         $this->expectExceptionMessage('HTTP XML response is not parsable', PrestashopWebServiceException::class);
         $xml = $ps->get(['resource' => 'categories']);
@@ -117,9 +116,9 @@ class PrestashopWebServiceTest extends TestCase
     /** @test */
     public function it_throws_exception_on_unsupported_version_from_request()
     {
-        $requestResponseStub = require(__DIR__.'/requests/category-schema.php');
+        $requestResponseStub    = require __DIR__ . '/requests/category-schema.php';
         $requestResponseStub[0] = preg_replace('/^PSWS-Version:(.+?)$/im', 'PSWS-Version: 99.99.99.9999', $requestResponseStub[0]);
-        $ps = $this->getMockedLibrary('executeCurl', $requestResponseStub);
+        $ps                     = $this->getMockedLibrary('executeCurl', $requestResponseStub);
 
         $this->expectExceptionMessage('This library is not compatible with this version of PrestaShop', PrestashopWebServiceException::class);
         $xml = $ps->get(['resource' => 'categories']);
@@ -134,7 +133,7 @@ class PrestashopWebServiceTest extends TestCase
                 env('prestashop-webservice.debug'),
             ]);
 
-        if (!$method) {
+        if (! $method) {
             return $ps->getMock();
         } else {
             $ps = $ps->setMethods([$method])->getMock();
@@ -146,4 +145,3 @@ class PrestashopWebServiceTest extends TestCase
         }
     }
 }
-

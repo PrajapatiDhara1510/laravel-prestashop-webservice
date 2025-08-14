@@ -1,10 +1,9 @@
 <?php
-
-namespace Protechstudio\PrestashopWebService\Exceptions;
+namespace PrajapatiDhara1510\PrestashopWebService\Exceptions;
 
 class PrestashopWebServiceRequestException extends PrestashopWebServiceException
 {
-    static protected $label = 'This call to PrestaShop Web Services failed and returned an HTTP status of %d. That means: %s.';
+    protected static $label = 'This call to PrestaShop Web Services failed and returned an HTTP status of %d. That means: %s.';
 
     protected $response;
 
@@ -17,7 +16,7 @@ class PrestashopWebServiceRequestException extends PrestashopWebServiceException
 
     public function hasResponse()
     {
-        return isset($this->response) && !empty($this->response);
+        return isset($this->response) && ! empty($this->response);
     }
 
     public function getResponse()

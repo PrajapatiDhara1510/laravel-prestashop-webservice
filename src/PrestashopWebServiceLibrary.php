@@ -130,9 +130,13 @@ class PrestashopWebServiceLibrary
             CURLOPT_HEADER         => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLINFO_HEADER_OUT    => true,
-            CURLOPT_HTTPAUTH       => CURLAUTH_BASIC,
-            CURLOPT_USERPWD        => $this->key . ':',
-            CURLOPT_HTTPHEADER     => ['Expect:'],
+            // CURLOPT_HTTPAUTH       => CURLAUTH_BASIC,
+            // CURLOPT_USERPWD        => $this->key . ':',
+            // CURLOPT_HTTPHEADER     => ['Expect:'],
+            CURLOPT_HTTPHEADER     => [
+                'Expect:',
+                'Authorization: Basic ' . base64_encode($this->key . ':')
+            ],
             CURLOPT_SSL_VERIFYPEER => config('app.env') === 'local' ? 0 : 1,
             CURLOPT_SSL_VERIFYHOST => config('app.env') === 'local' ? 0 : 2, // value 1 is not accepted https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYHOST.html
         ];
